@@ -13,15 +13,11 @@
 ### 安装依赖
 ```bash
 pip install -r requirements.txt
-# 需提前安装FFmpeg并加入系统路径
-基本使用
-bash
-复制
-python video_translator.py --input video.mp4 --output chinese_video.mp4
-高级配置
-修改config.yaml自定义设置：
+```
+### 需提前安装FFmpeg并加入系统路径
 
-yaml
+## 基本使用
+```yaml
 复制
 translation:
   source_lang: auto    # 自动检测源语言
