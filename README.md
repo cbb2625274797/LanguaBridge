@@ -4,9 +4,9 @@
 
 ## 主要功能
 - 🎙️ 语音识别：自动提取视频音频并转写为原文文本
-- 🌍 智能翻译：支持多语种翻译（英/日/韩等→中文）
+- 🌍 智能翻译：支持多语种翻译（理论50种语言→中文）
 - 🔊 语音合成：生成自然流畅的中文配音音频
-- 🎬 视频合成：自动对齐时间轴，保留原视频画面与背景音
+- 🎬 视频合成：对齐时间轴，保留原视频画面与背景音
 
 ## 快速开始
 ### 环境要求
@@ -27,19 +27,13 @@ pip install -r requirements.txt
 pip install -U openai-whisper
 ```
 
-## 支持格式
-| 输入格式 | 输出格式 | 备注       |
-|------|------|----------|
-| MP4  | MP4  | 推荐 H.264 |
+## 组件
+离线语音识别：[Whisper V3](https://github.com/openai/whisper)
 
-### 依赖组件
-语音识别：Whisper V3
+机器翻译：[Qwen2.5](https://github.com/QwenLM/Qwen2.5)
 
-机器翻译：Qwen2.5
+语音合成：[GPT-SoVits](https://github.com/RVC-Boss/GPT-SoVITS)
 
-语音合成：GPT-SoVits
-
-视频处理：FFmpeg + MoviePy
 
 ## 许可协议
-MIT License - 免费用于个人及商业用途，需保留版权声明
+**MIT License - 免费用于个人及商业用途，需保留版权声明**
