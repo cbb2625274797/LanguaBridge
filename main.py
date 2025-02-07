@@ -1,8 +1,8 @@
-import audio_process
-import asr_whisper as asr
-from LLM import ollama
-import translator
 import GPT_SoVits as sovits
+import asr_whisper as asr
+import audio_process
+import translator
+from LLM import ollama
 
 if __name__ == "__main__":
     # 使用示例
@@ -24,3 +24,4 @@ if __name__ == "__main__":
     translator_results = translator.translate_text(translator_LLM, text_results)  # 大模型翻译
     sovits.get_audio_file(text_results, translator_results)  # 语音生成
     audio_process.insert_audios("./temp/translation.wav", "./temp/translated_segment/")
+    audio_process.merge_audio_video(input_video, "./temp/translation.wav", "./output.mp4")

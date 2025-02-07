@@ -1,11 +1,9 @@
-import os
 import shutil
 import struct
 import subprocess
 import wave
 
-from moviepy import VideoFileClip
-from pydub import AudioSegment
+from moviepy import VideoFileClip, AudioFileClip
 
 
 def extract_audio_from_video(video_path, output_audio_path):
@@ -163,6 +161,25 @@ def insert_audios(main_audio_path, insert_dir):
     # 导出处理后的音频
     output_format = os.path.splitext(main_audio_path)[1][1:]  # 获取输入文件的格式
     main_audio.export("./temp/translation." + output_format, format=output_format)
+
+
+def merge_audio_video(video_path, audio_path, output_path):
+    # 加载视频和音频文件
+    video = VideoFileClip(video_path)
+    audio = AudioFileClip(audio_path)
+
+    # 如果音频长度与视频不匹配，调整音频长度以匹配视频
+    if audio.duration > video.duration:
+        audio = audio.subclip(0, video.duration)
+    elif audio.duration < video.duration:
+        # 若音频较短，可以选择循环播放或静音延长。这里选择静音延长作为示例。
+        audio = audio.set_duration(video.duration)
+
+    # 将音频设置到视频中
+    final_clip = video.set_audio(audio)
+
+    # 导出最终的视频文件
+    final_clip.write_videofile(output_path, codec='libx264', audio_codec='aac')
 
 
 if __name__ == "__main__":
