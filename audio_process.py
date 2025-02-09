@@ -1,9 +1,11 @@
+import os
 import shutil
 import struct
 import subprocess
 import wave
 
-from moviepy import VideoFileClip, AudioFileClip
+from moviepy import VideoFileClip
+from pydub import AudioSegment
 
 
 def extract_audio_from_video(video_path, output_audio_path):
@@ -77,10 +79,6 @@ def extract_audio_segment(audio_path, text_results, output_path, ):
         audio_segment = audio[segment['start'] * 1000:segment['end'] * 1000]
         audio_segment.export(os.path.join(output_path, f"{segment['start']:.2f}.mp3"), format="mp3")
     print("音频片段已导出到指定目录。")
-
-
-from pydub import AudioSegment
-import os
 
 
 def load_audio(file_path):
@@ -157,29 +155,27 @@ def insert_audios(main_audio_path, insert_dir):
                 main_audio = main_audio[:start_time] + insert_audio + main_audio[start_time + len(insert_audio):]
             except ValueError as e:
                 print(f"处理文件 '{file_name}' 时出错: {e}")
-
+    BGM_audio = AudioSegment.from_file("./temp/htdemucs/extracted_audio/no_vocals.wav")
+    # 将 BGM 叠加到主音频上
+    merged_audio = main_audio.overlay(BGM_audio)
     # 导出处理后的音频
     output_format = os.path.splitext(main_audio_path)[1][1:]  # 获取输入文件的格式
-    main_audio.export("./temp/translation." + output_format, format=output_format)
+    merged_audio.export("./temp/translation." + output_format, format=output_format)
 
 
-def merge_audio_video(video_path, audio_path, output_path):
-    # 加载视频和音频文件
-    video = VideoFileClip(video_path)
-    audio = AudioFileClip(audio_path)
-
-    # 如果音频长度与视频不匹配，调整音频长度以匹配视频
-    if audio.duration > video.duration:
-        audio = audio.subclip(0, video.duration)
-    elif audio.duration < video.duration:
-        # 若音频较短，可以选择循环播放或静音延长。这里选择静音延长作为示例。
-        audio = audio.set_duration(video.duration)
-
-    # 将音频设置到视频中
-    final_clip = video.set_audio(audio)
-
-    # 导出最终的视频文件
-    final_clip.write_videofile(output_path, codec='libx264', audio_codec='aac')
+def ffmpeg_merge(video_path, audio_path, output_path):
+    command = [
+        "ffmpeg",
+        "-i", video_path,
+        "-i", audio_path,
+        "-c:v", "copy",  # 不重新编码视频
+        "-c:a", "aac",  # 音频编码为 AAC
+        "-map", "0:v:0",  # 选择第一个视频流
+        "-map", "1:a:0",  # 选择第二个音频流
+        "-shortest",  # 以较短的文件时长为准
+        output_path
+    ]
+    subprocess.run(command)
 
 
 if __name__ == "__main__":
@@ -189,3 +185,4 @@ if __name__ == "__main__":
     main_audio_path = "./temp/translation.wav"
     insert_dir = "./temp/translated_segment/"
     insert_audios(main_audio_path, insert_dir)
+    ffmpeg_merge("./temp/test2.mp4", "./temp/translation.wav", "output_video.mp4")

@@ -80,7 +80,7 @@ def post_v2(
         'Content-Type': 'application/json',
     }
     # 发送POST请求
-    response = requests.post(url_v2_tts, data=json_data, headers=headers, timeout=99)
+    response = requests.post(url_v2_tts, data=json_data, headers=headers, timeout=99999)
 
     # 检查响应状态码
     if response.status_code == 200:
